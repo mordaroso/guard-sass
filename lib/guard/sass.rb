@@ -6,18 +6,16 @@ require 'sass'
 
 module Guard
   class Sass < Guard
-  
-    VERSION = '0.1.0'
     attr_accessor :options
-    
+
     def initialize(watchers = [], options = {})
       super(watchers, {
-        :output => 'css',
-        :load_paths => Dir.glob('**/**').find_all {|i| File.directory?(i)}
+              :output => 'css',
+              :load_paths => Dir.glob('**/**').find_all {|i| File.directory?(i)}
       }.merge(options))
     end
-        
-            
+
+
     # Builds the sass or scss. Determines engine to use by extension
     # of path given.
     #
@@ -31,8 +29,8 @@ module Guard
       engine = ::Sass::Engine.new(content, {:syntax => type, :load_paths => @options[:load_paths]})
       engine.render
     end
-    
-    # Get the file path to output the css based on the file being 
+
+    # Get the file path to output the css based on the file being
     # built.
     #
     # @param file [String] path to file being built
@@ -44,17 +42,17 @@ module Guard
       r = File.join folder, File.basename(file).split('.')[0]
       r << '.css'
     end
-    
-    
+
+
     # ================
     # = Guard method =
     # ================
-    
+
     # Build all files being watched
     def run_all
       run_on_change(Watcher.match_files(self, Dir.glob(File.join('**', '*.*'))))
     end
-    
+
     # Build the files given
     def run_on_change(paths)
       changed_files = paths.reject{ |f| File.basename(f)[0] == "_" }.map do |file|
@@ -69,7 +67,7 @@ module Guard
       end.compact
       notify changed_files
     end
-    
+
     def notify(changed_files)
       ::Guard.guards.each do |guard|
         paths = Watcher.match_files(guard, changed_files)
